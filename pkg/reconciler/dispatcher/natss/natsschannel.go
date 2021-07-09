@@ -21,17 +21,14 @@ import (
 	"fmt"
 	"strings"
 
-	duckv1 "knative.dev/pkg/apis/duck/v1"
-
-	"k8s.io/apimachinery/pkg/types"
-	"knative.dev/pkg/apis/duck"
-
 	"github.com/google/uuid"
 	"github.com/kelseyhightower/envconfig"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	messagingv1 "knative.dev/eventing/pkg/apis/messaging/v1"
 	"knative.dev/eventing/pkg/channel"
-
+	"knative.dev/pkg/apis/duck"
+	duckv1 "knative.dev/pkg/apis/duck/v1"
 	"knative.dev/pkg/kmeta"
 	pkgreconciler "knative.dev/pkg/reconciler"
 
@@ -66,7 +63,7 @@ const (
 
 // Reconciler reconciles NATSS Channels.
 type Reconciler struct {
-	natssDispatcher dispatcher.NatssDispatcher
+	natssDispatcher dispatcher.NatsDispatcher
 
 	natssClientSet clientset.Interface
 
@@ -109,7 +106,7 @@ func NewController(ctx context.Context, _ configmap.Watcher) *controller.Impl {
 		Logger:   logger.Desugar(),
 		Reporter: reporter,
 	}
-	natssDispatcher, err := dispatcher.NewDispatcher(dispatcherArgs)
+	natssDispatcher, err := dispatcher.NewNatssDispatcher(dispatcherArgs)
 	if err != nil {
 		logger.Fatal("Unable to create natss dispatcher", zap.Error(err))
 	}
